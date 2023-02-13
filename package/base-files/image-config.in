@@ -76,7 +76,7 @@ config TARGET_PREINIT_IFNAME
 config TARGET_PREINIT_IP
 	string
 	prompt "IP address for preinit network messages" if PREINITOPT
-	default "192.168.1.1"
+	default "192.168.80.1"
 	help
 		IP address used to configure interface for preinit network
 		messages, including failsafe messages
@@ -92,7 +92,7 @@ config TARGET_PREINIT_NETMASK
 config TARGET_PREINIT_BROADCAST
 	string
 	prompt "Broadcast address for preinit network messages" if PREINITOPT
-	default "192.168.1.255"
+	default "192.168.80.255"
 	help
 		Broadcast address to which to send preinit network messages, as
 		as failsafe messages
@@ -158,7 +158,7 @@ if VERSIONOPT
 	config VERSION_DIST
 		string
 		prompt "Release distribution"
-		default "OpenWrt"
+		default "ChatGPT-Wrt"
 		help
 			This is the name of the release distribution.
 			If unspecified, it defaults to OpenWrt.
