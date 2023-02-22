@@ -6,5 +6,5 @@
 #src-git-full targets https://github.com/openwrt/targets.git
 #src-git-full oldpackages http://git.openwrt.org/packages.git
 #src-link custom /usr/src/openwrt/custom-feed
-src-link packages /srv/openwrt/packages
-src-link luci /srv/openwrt/luci
+src-link packages /home/xfrpc/packages
+src-link luci /home/xfrpc/luci
