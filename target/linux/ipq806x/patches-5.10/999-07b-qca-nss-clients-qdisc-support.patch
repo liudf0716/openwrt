@@ -438,26 +438,6 @@
 +
 +
  #endif /* _CONNTRACK_PROTO_GRE_H */
---- a/net/ipv4/ip_gre.c
-+++ b/net/ipv4/ip_gre.c
-@@ -1325,6 +1325,7 @@ static void ipgre_tap_setup(struct net_d
- 	dev->netdev_ops	= &gre_tap_netdev_ops;
- 	dev->priv_flags &= ~IFF_TX_SKB_SHARING;
- 	dev->priv_flags	|= IFF_LIVE_ADDR_CHANGE;
-+	dev->priv_flags_qca_ecm |= IFF_QCA_ECM_GRE_V4_TAP; /* QCA NSS ECM Support */
- 	ip_tunnel_setup(dev, gre_tap_net_id);
- }
- 
---- a/net/ipv6/ip6_gre.c
-+++ b/net/ipv6/ip6_gre.c
-@@ -1921,6 +1921,7 @@ static void ip6gre_tap_setup(struct net_
- 
- 	dev->priv_flags &= ~IFF_TX_SKB_SHARING;
- 	dev->priv_flags |= IFF_LIVE_ADDR_CHANGE;
-+	dev->priv_flags_qca_ecm |= IFF_QCA_ECM_GRE_V6_TAP; /* QCA NSS ECM Support */
- 	netif_keep_dst(dev);
- }
- 
 --- a/include/net/netfilter/nf_flow_table.h
 +++ b/include/net/netfilter/nf_flow_table.h
 @@ -157,10 +157,14 @@ enum nf_flow_flags {

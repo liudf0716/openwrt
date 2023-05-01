@@ -89,74 +89,74 @@ $(call KernelPackage/qca-nss-ecm/Default/install, $(1))
 endef
 
 # Variant with additional features enabled for premium profile
-define KernelPackage/qca-nss-ecm-premium/Default
-$(call KernelPackage/qca-nss-ecm/Default)
-  TITLE+= (with premium features)
-  VARIANT:=premium
-  DEPENDS+=+kmod-nat46 \
-	+kmod-l2tp +kmod-pppol2tp +kmod-pptp \
-	+kmod-bonding
-endef
-
-define KernelPackage/qca-nss-ecm-premium/Description/Default
-$(call KernelPackage/qca-nss-ecm/Description/Default)
-with the premium features enabled
-endef
-
-define KernelPackage/qca-nss-ecm-premium/Default/install
-$(call KernelPackage/qca-nss-ecm/install)
-endef
-
-define KernelPackage/qca-nss-ecm-premium
-$(call KernelPackage/qca-nss-ecm-premium/Default)
-endef
-
-define KernelPackage/qca-nss-ecm-premium/Description
-$(call KernelPackage/qca-nss-ecm-premium/Description/Default)
-endef
-
-define KernelPackage/qca-nss-ecm-premium/install
-$(call KernelPackage/qca-nss-ecm-standard/install, $(1))
-endef
-
-# Variant with additional features enabled for noload profile
-define KernelPackage/qca-nss-ecm-noload
-  $(call KernelPackage/qca-nss-ecm/Default)
-  TITLE+= (with noload features)
-  PROVIDES:=kmod-qca-nss-ecm
-  VARIANT:=noload
-  DEPENDS+=+kmod-l2tp +kmod-pppol2tp +kmod-pptp \
-	   +kmod-bonding
-endef
-
-define KernelPackage/qca-nss-ecm-noload/Description
-  $(call KernelPackage/qca-nss-ecm/Description/Default)
-  When selected, this package installs the driver but does not load it at init.
-endef
-
-define KernelPackage/qca-nss-ecm-noload/install
-$(call KernelPackage/qca-nss-ecm/Default/install, $(1))
-	#
-	# Remove the START line from the init script, so that the symlink
-	# in the /etc/rc.d directory is not created.
-	#
-	sed -i '/START=/d' $(1)/etc/init.d/qca-nss-ecm
-endef
-
-define KernelPackage/qca-nss-ecm-premium-noload
-  $(call KernelPackage/qca-nss-ecm-premium/Default)
-  PROVIDES:=kmod-qca-nss-ecm-premium
-endef
-
-define KernelPackage/qca-nss-ecm-premium-noload/Description
-  $(call KernelPackage/qca-nss-ecm-premium/Description/Default)
-  When selected, this package installs the driver but does not load it at init.
-endef
-
-define KernelPackage/qca-nss-ecm-premium-noload/install
-$(call KernelPackage/qca-nss-ecm-premium/Default/install, $(1))
-endef
-
+#define KernelPackage/qca-nss-ecm-premium/Default
+#$(call KernelPackage/qca-nss-ecm/Default)
+#  TITLE+= (with premium features)
+#  VARIANT:=premium
+#  DEPENDS+=+kmod-nat46 \
+#	+kmod-l2tp +kmod-pppol2tp +kmod-pptp \
+#	+kmod-bonding
+#endef
+#
+#define KernelPackage/qca-nss-ecm-premium/Description/Default
+#$(call KernelPackage/qca-nss-ecm/Description/Default)
+#with the premium features enabled
+#endef
+#
+#define KernelPackage/qca-nss-ecm-premium/Default/install
+#$(call KernelPackage/qca-nss-ecm/install)
+#endef
+#
+#define KernelPackage/qca-nss-ecm-premium
+#$(call KernelPackage/qca-nss-ecm-premium/Default)
+#endef
+#
+#define KernelPackage/qca-nss-ecm-premium/Description
+#$(call KernelPackage/qca-nss-ecm-premium/Description/Default)
+#endef
+#
+#define KernelPackage/qca-nss-ecm-premium/install
+#$(call KernelPackage/qca-nss-ecm-standard/install, $(1))
+#endef
+#
+## Variant with additional features enabled for noload profile
+#define KernelPackage/qca-nss-ecm-noload
+#  $(call KernelPackage/qca-nss-ecm/Default)
+#  TITLE+= (with noload features)
+#  PROVIDES:=kmod-qca-nss-ecm
+#  VARIANT:=noload
+#  DEPENDS+=+kmod-l2tp +kmod-pppol2tp +kmod-pptp \
+#	   +kmod-bonding
+#endef
+#
+#define KernelPackage/qca-nss-ecm-noload/Description
+#  $(call KernelPackage/qca-nss-ecm/Description/Default)
+#  When selected, this package installs the driver but does not load it at init.
+#endef
+#
+#define KernelPackage/qca-nss-ecm-noload/install
+#$(call KernelPackage/qca-nss-ecm/Default/install, $(1))
+#	#
+#	# Remove the START line from the init script, so that the symlink
+#	# in the /etc/rc.d directory is not created.
+#	#
+#	sed -i '/START=/d' $(1)/etc/init.d/qca-nss-ecm
+#endef
+#
+#define KernelPackage/qca-nss-ecm-premium-noload
+#  $(call KernelPackage/qca-nss-ecm-premium/Default)
+#  PROVIDES:=kmod-qca-nss-ecm-premium
+#endef
+#
+#define KernelPackage/qca-nss-ecm-premium-noload/Description
+#  $(call KernelPackage/qca-nss-ecm-premium/Description/Default)
+#  When selected, this package installs the driver but does not load it at init.
+#endef
+#
+#define KernelPackage/qca-nss-ecm-premium-noload/install
+#$(call KernelPackage/qca-nss-ecm-premium/Default/install, $(1))
+#endef
+#
 define Build/InstallDev/qca-nss-ecm
 	$(INSTALL_DIR) $(1)/usr/include/qca-nss-ecm
 	$(CP) $(PKG_BUILD_DIR)/exports/* $(1)/usr/include/qca-nss-ecm/
@@ -253,33 +253,33 @@ define Build/Compile
 		modules
 endef
 
-define KernelPackage/qca-nss-ecm-premium/config
-menu "ECM Configuration"
-	config QCA_NSS_ECM_EXAMPLES_PCC
-		bool "Build PCC usage example"
-		help
-			Selecting this will build the PCC classifier usage example module.
-		default n
-
-	config QCA_NSS_ECM_EXAMPLES_MARK
-		bool "Build Mark classifier usage example"
-		help
-			Selecting this will build the Mark classifier usage example module.
-		default n
-
-	config QCA_NSS_ECM_OVS
-		bool "Build OVS classifier external module"
-		help
-			Selecting this will build the OVS classifier external module.
-		default n
-
-	config QCA_ECM_SFE_SUPPORT
-		bool "Add SFE support to ECM driver"
-		default n
-endmenu
-endef
-
-$(eval $(call KernelPackage,qca-nss-ecm-noload))
+#define KernelPackage/qca-nss-ecm-premium/config
+#menu "ECM Configuration"
+#	config QCA_NSS_ECM_EXAMPLES_PCC
+#		bool "Build PCC usage example"
+#		help
+#			Selecting this will build the PCC classifier usage example module.
+#		default n
+#
+#	config QCA_NSS_ECM_EXAMPLES_MARK
+#		bool "Build Mark classifier usage example"
+#		help
+#			Selecting this will build the Mark classifier usage example module.
+#		default n
+#
+#	config QCA_NSS_ECM_OVS
+#		bool "Build OVS classifier external module"
+#		help
+#			Selecting this will build the OVS classifier external module.
+#		default n
+#
+#	config QCA_ECM_SFE_SUPPORT
+#		bool "Add SFE support to ECM driver"
+#		default n
+#endmenu
+#endef
+#
+#$(eval $(call KernelPackage,qca-nss-ecm-noload))
 $(eval $(call KernelPackage,qca-nss-ecm-standard))
-$(eval $(call KernelPackage,qca-nss-ecm-premium-noload))
-$(eval $(call KernelPackage,qca-nss-ecm-premium))
+#$(eval $(call KernelPackage,qca-nss-ecm-premium-noload))
+#$(eval $(call KernelPackage,qca-nss-ecm-premium))
