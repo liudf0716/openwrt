@@ -1,0 +1,48 @@
+for file in kcptun xfrpc wifidogx ; do
+    case $file in
+        kcptun)
+            if [ -f /etc/config/kcptun ] ; then
+                disabled=$(uci get kcptun.@client[0].disabled 2>/dev/null)
+                # if disabled option is set, then set enabled option to opposite value of disabled option
+                if [ -n "$disabled" ] ; then
+                    if [ "$disabled" = "1" ] ; then
+                        uci set kcptun.@client[0].enabled=0
+                    else
+                        uci set kcptun.@client[0].enabled=1
+                    fi
+                    uci delete kcptun.@client[0].disabled
+                    uci commit kcptun
+                fi
+            fi
+            ;;
+        xfrpc)
+            disabled=$(uci get xfrpc.init.disabled 2>/dev/null)
+            if [ -n "$disabled" ] ; then
+                if [ "$disabled" = "1" ] ; then
+                    uci set xfrpc.init.enabled=0
+                else
+                    uci set xfrpc.init.enabled=1
+                fi
+                uci delete xfrpc.init.disabled
+                uci commit xfrpc
+            fi
+            ;;
+        wifidogx)
+            disabled=$(uci get wifidogx.common.disabled 2>/dev/null)
+            if [ -n "$disabled" ] ; then
+                if [ "$disabled" = "1" ] ; then
+                    uci set wifidogx.common.enabled=0
+                else
+                    uci set wifidogx.common.enabled=1
+                fi
+                uci delete wifidogx.common.disabled
+                uci commit wifidogx
+            fi
+            ;;
+        *)
+            echo "unknown"
+            ;;
+    esac
+done
+
+exit 0
