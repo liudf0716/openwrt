@@ -1,3 +1,17 @@
+Package: 6rd
+Version: 12
+Depends: libc, kmod-sit
+License: GPL-2.0
+Section: net
+Architecture: all
+Installed-Size: 2839
+Filename: 6rd_12_all.ipk
+Size: 3634
+SHA256sum: 5031e89bc59a455d7d42897e77d3aeb3c19dc9a28c5925433949b811e8322127
+Description:  Provides support for 6rd tunnels in /etc/config/network.
+ Refer to http://wiki.openwrt.org/doc/uci/network for
+ configuration details.
+
 Package: ar3k-firmware
 Version: 20220411-1
 Depends: libc
@@ -32,14 +46,14 @@ SHA256sum: a94fdb3f1a0e5b3c34b5ecdc1eea80505b56d1b088b6253b5ea6e2b9d5a36878
 Description:  ath10k qca988x board firmware
 
 Package: ath10k-board-qca9984
-Version: 20220411-1
+Version: 20230515-1
 Depends: libc
 Section: firmware
 Architecture: arm_cortex-a15_neon-vfpv4
-Installed-Size: 9801
-Filename: ath10k-board-qca9984_20220411-1_arm_cortex-a15_neon-vfpv4.ipk
-Size: 10459
-SHA256sum: 2c866edebc0552fabf8fe8472743f60c3449fca2bf15a101812fcc18a70009ea
+Installed-Size: 14503
+Filename: ath10k-board-qca9984_20230515-1_arm_cortex-a15_neon-vfpv4.ipk
+Size: 15091
+SHA256sum: 043309271be64b637434c721904945d92c14ca7807b8a00866bfc0180c19cbe3
 Description:  ath10k qca9984 board firmware
 
 Package: ath10k-board-qca99x0
@@ -194,15 +208,15 @@ Description:  The Swiss Army Knife of embedded Linux.
  It slices, it dices, it makes Julian Fries.
 
 Package: ca-bundle
-Version: 20211016-1
+Version: 20230311-1
 Depends: libc
 Provides: ca-certs
 Section: base
 Architecture: all
-Installed-Size: 113264
-Filename: ca-bundle_20211016-1_all.ipk
-Size: 114113
-SHA256sum: d8045be032362fd12ae23c5b44ed603dfcb98a9d9f7e78c3d3c0d4dee992da96
+Installed-Size: 123485
+Filename: ca-bundle_20230311-1_all.ipk
+Size: 124294
+SHA256sum: 91b968c2a356984ef9a672bf56ba1775bb4e90d6a5bcf0f01bb4c286baab6942
 Description:  System CA certificates as a bundle
 
 Package: carl9170-firmware
@@ -448,6 +462,18 @@ Size: 122830
 SHA256sum: 803d213272b78a57b65d73426097a3fec7e578edafb51af23a701b756af4a3bc
 Description:  libbpf is a library for loading eBPF programs and reading and manipulating eBPF objects from user-space.
 
+Package: libcap
+Version: 2.63-1
+Depends: libc
+License: GPL-2.0-only
+Section: libs
+Architecture: arm_cortex-a15_neon-vfpv4
+Installed-Size: 13553
+Filename: libcap_2.63-1_arm_cortex-a15_neon-vfpv4.ipk
+Size: 14218
+SHA256sum: f1bc287047bff4f02cc5f59331b904cc33e84d4067b9a4e1fb7cce799acfdf50
+Description:  Linux capabilities library library
+
 Package: libcomerr0
 Version: 1.46.5-2
 Depends: libc, libuuid1
@@ -512,6 +538,84 @@ Size: 217348
 SHA256sum: d80db17cd810a99bfff79ccc38cf77b7bd841542b246c937febe9540f581e6c4
 Description:  Marvell 8388/8682 USB firmware
 
+Package: libevent2-7
+Version: 2.1.12-1
+Depends: libc
+Provides: libevent2
+License: BSD-3-Clause
+Section: libs
+ABIVersion: -7
+CPE-ID: cpe:/a:libevent_project:libevent
+Architecture: arm_cortex-a15_neon-vfpv4
+Installed-Size: 83903
+Filename: libevent2-7_2.1.12-1_arm_cortex-a15_neon-vfpv4.ipk
+Size: 84942
+SHA256sum: 0ec5dce9f19eb9913c028ef0a94e0ae1fa2d69015733199dab51dd54191501da
+Description:  The libevent API provides a mechanism to execute a callback function
+ when a specific event occurs on a file descriptor or after a timeout
+ has been reached. Furthermore, libevent also support callbacks due
+ to signals or regular timeouts.
+ 
+ libevent is meant to replace the event loop found in event driven
+ network servers. An application just needs to call event_dispatch()
+ and then add or remove events dynamically without having to change
+ the event loop.
+ 
+ This package contains the libevent shared library historically
+ containing both the core & extra libraries.
+
+Package: libevent2-core7
+Version: 2.1.12-1
+Depends: libc
+Provides: libevent2-core
+License: BSD-3-Clause
+Section: libs
+ABIVersion: 7
+CPE-ID: cpe:/a:libevent_project:libevent
+Architecture: arm_cortex-a15_neon-vfpv4
+Installed-Size: 47737
+Filename: libevent2-core7_2.1.12-1_arm_cortex-a15_neon-vfpv4.ipk
+Size: 48965
+SHA256sum: bc4910d0db7bbfa438973ec70bd2a5f5e3190d653ecc71d4478c1480e7649fc3
+Description:  The libevent API provides a mechanism to execute a callback function
+ when a specific event occurs on a file descriptor or after a timeout
+ has been reached. Furthermore, libevent also support callbacks due
+ to signals or regular timeouts.
+ 
+ libevent is meant to replace the event loop found in event driven
+ network servers. An application just needs to call event_dispatch()
+ and then add or remove events dynamically without having to change
+ the event loop.
+ 
+ This package contains the libevent core shared library for the event,
+ buffer & utility functions.
+
+Package: libevent2-openssl7
+Version: 2.1.12-1
+Depends: libc, libopenssl1.1, libevent2-core7
+Provides: libevent2-openssl
+License: BSD-3-Clause
+Section: libs
+ABIVersion: 7
+CPE-ID: cpe:/a:libevent_project:libevent
+Architecture: arm_cortex-a15_neon-vfpv4
+Installed-Size: 6684
+Filename: libevent2-openssl7_2.1.12-1_arm_cortex-a15_neon-vfpv4.ipk
+Size: 7810
+SHA256sum: 7a6eb671fd15df5be249217afc7bd8a192274bbb3554ac55cd45a4f39f88f100
+Description:  The libevent API provides a mechanism to execute a callback function
+ when a specific event occurs on a file descriptor or after a timeout
+ has been reached. Furthermore, libevent also support callbacks due
+ to signals or regular timeouts.
+ 
+ libevent is meant to replace the event loop found in event driven
+ network servers. An application just needs to call event_dispatch()
+ and then add or remove events dynamically without having to change
+ the event loop.
+ 
+ This package contains the libevent OpenSSL shared library for encrypted
+ bufferevents.
+
 Package: libext2fs2
 Version: 1.46.5-2
 Depends: libc, libuuid1, libblkid1, libss2, libcomerr0
@@ -526,6 +630,21 @@ Filename: libext2fs2_1.46.5-2_arm_cortex-a15_neon-vfpv4.ipk
 Size: 171844
 SHA256sum: b0b20bdcee8f4646636aceb7722c727ef4d4407b6bfa1e651f5610712b7c3106
 Description:  libext2fs is a library which can access ext2, ext3 and ext4 filesystems.
+
+Package: libgmp10
+Version: 6.2.1-1
+Depends: libc
+Provides: libgmp
+License: GPL-2.0-or-later
+Section: libs
+ABIVersion: 10
+Architecture: arm_cortex-a15_neon-vfpv4
+Installed-Size: 186307
+Filename: libgmp10_6.2.1-1_arm_cortex-a15_neon-vfpv4.ipk
+Size: 186942
+SHA256sum: d628152fb246f8b856dcd4981711f0ad97c13400409e61925f167a1ad73a8be4
+Description:  GMP is a free library for arbitrary precision arithmetic, operating on
+ signed integers, rational numbers, and floating point numbers.
 
 Package: libiwinfo-data
 Version: 2022-12-15-8d158096-1
@@ -613,6 +732,23 @@ Description:  Lua is a powerful light-weight programming language designed for e
  language. Lua is free software.
  This package contains the Lua shared libraries, needed by other programs.
 
+Package: libmbedtls12
+Version: 2.28.2-1
+Depends: libc
+Provides: libmbedtls
+License: GPL-2.0-or-later
+Section: libs
+ABIVersion: 12
+CPE-ID: cpe:/a:arm:mbed_tls
+Architecture: arm_cortex-a15_neon-vfpv4
+Installed-Size: 198865
+Filename: libmbedtls12_2.28.2-1_arm_cortex-a15_neon-vfpv4.ipk
+Size: 199570
+SHA256sum: f5c51651f0e5b98658db77f08e85d80708e45a1fc30b1800f3a75eda34a4d156
+Description:  The aim of the mbedtls project is to provide a quality, open-source
+ cryptographic library written in C and targeted at embedded systems.
+ This package contains the mbedtls library.
+
 Package: libmnl0
 Version: 1.0.5-1
 Depends: libc
@@ -647,6 +783,35 @@ Description:  libmnl is a minimalistic user-space library oriented to Netlink de
  is reduced, i.e. the library provides many helpers, but the programmer is not
  forced to use them.
 
+Package: libncurses6
+Version: 6.3-2
+Depends: libc, terminfo
+Provides: libncursesw, libncurses, libncursesw6
+License: MIT
+Section: libs
+ABIVersion: 6
+CPE-ID: cpe:/a:gnu:ncurses
+Architecture: arm_cortex-a15_neon-vfpv4
+Installed-Size: 157301
+Filename: libncurses6_6.3-2_arm_cortex-a15_neon-vfpv4.ipk
+Size: 155666
+SHA256sum: 78a6cba63eb76e45cea8cbdf547315c84ec4a47f6822a11789db8d0d8270bcaa
+Description:  Terminal handling library (Unicode)
+
+Package: libnettle8
+Version: 3.7.3-2
+Depends: libc, libgmp10
+Provides: libnettle
+License: GPL-2.0-or-later
+Section: libs
+ABIVersion: 8
+Architecture: arm_cortex-a15_neon-vfpv4
+Installed-Size: 328059
+Filename: libnettle8_3.7.3-2_arm_cortex-a15_neon-vfpv4.ipk
+Size: 327459
+SHA256sum: f5312606b3fc4ada075af23684a37df4a275e1923f050afd3ef751e34ba64b92
+Description:  GNU crypto library
+
 Package: libnftnl11
 Version: 1.2.1-2
 Depends: libc, libmnl0
@@ -663,6 +828,34 @@ SHA256sum: d5f87440002e556b35f5bc79e0a25c29865246ae4d5ef97b6cc6a9a3595d06e2
 Description:  libnftnl is a userspace library providing a low-level netlink
  programming interface (API) to the in-kernel nf_tables subsystem.
 
+Package: libnl-core200
+Version: 3.5.0-1
+Depends: libc, libpthread
+Provides: libnl-core
+License: LGPL-2.1
+Section: libs
+ABIVersion: 200
+Architecture: arm_cortex-a15_neon-vfpv4
+Installed-Size: 35769
+Filename: libnl-core200_3.5.0-1_arm_cortex-a15_neon-vfpv4.ipk
+Size: 36329
+SHA256sum: 6bb900ec112b4f50a48d110a08095a86e92d6d131a908c88a0dc0937edb41338
+Description:  Common code for all netlink libraries
+
+Package: libnl-genl200
+Version: 3.5.0-1
+Depends: libc, libnl-core200
+Provides: libnl-genl
+License: LGPL-2.1
+Section: libs
+ABIVersion: 200
+Architecture: arm_cortex-a15_neon-vfpv4
+Installed-Size: 6970
+Filename: libnl-genl200_3.5.0-1_arm_cortex-a15_neon-vfpv4.ipk
+Size: 7695
+SHA256sum: 07f05c239fe199a9727bf1ce81ffc9e422f0c82e28ff092b77d9a40710a89499
+Description:  Generic Netlink Library Functions
+
 Package: libnl-tiny1
 Version: 2021-11-21-8e0555fb-1
 Depends: libc
@@ -676,6 +869,59 @@ Filename: libnl-tiny1_2021-11-21-8e0555fb-1_arm_cortex-a15_neon-vfpv4.ipk
 Size: 13487
 SHA256sum: cb016f38b1af67de9c578e2dab82e7d39dda1d3bded56ac64e7778bb033ee492
 Description:  This package contains a stripped down version of libnl
+
+Package: libopenssl1.1
+Version: 1.1.1u-2
+Depends: libc
+Provides: libopenssl
+License: OpenSSL
+Section: libs
+ABIVersion: 1.1
+CPE-ID: cpe:/a:openssl:openssl
+Architecture: arm_cortex-a15_neon-vfpv4
+Installed-Size: 1105822
+Filename: libopenssl1.1_1.1.1u-2_arm_cortex-a15_neon-vfpv4.ipk
+Size: 1095466
+SHA256sum: d3ff2f1b945d2bf73a88f7ed03ce1f29c29acc3794b196329fbe1f60b634c2df
+Description:  The OpenSSL Project is a collaborative effort to develop a robust,
+ commercial-grade, full-featured, and Open Source toolkit implementing the
+ Transport Layer Security (TLS) protocol as well as a full-strength
+ general-purpose cryptography library.
+ This package contains the OpenSSL shared libraries, needed by other programs.
+
+Package: libpopt0
+Version: 1.16-2
+Depends: libc
+Provides: libpopt
+License: MIT
+Section: libs
+ABIVersion: 0
+Architecture: arm_cortex-a15_neon-vfpv4
+Installed-Size: 16740
+Filename: libpopt0_1.16-2_arm_cortex-a15_neon-vfpv4.ipk
+Size: 17386
+SHA256sum: 660c6b56ded82b19a475c8e769be83a9f513aca8badc2567e28d2dadea752bc6
+Description:  A command line option parsing library
+
+Package: libreadline8
+Version: 8.1-1
+Depends: libc, libncursesw6
+Provides: libreadline
+License: GPL-3.0-or-later
+Section: libs
+ABIVersion: 8
+CPE-ID: cpe:/a:gnu:readline
+Architecture: arm_cortex-a15_neon-vfpv4
+Installed-Size: 124687
+Filename: libreadline8_8.1-1_arm_cortex-a15_neon-vfpv4.ipk
+Size: 123985
+SHA256sum: af302ba2bc869ce4de39f82f5d03808aa1655a9dace8379fc0404886e91172d1
+Description:  The Readline library provides a set of functions for use by applications
+ that allow users to edit command lines as they are typed in. Both Emacs
+ and vi editing modes are available. The Readline library includes
+ additional functions to maintain a list of previously-entered command
+ lines, to recall and perhaps reedit those lines, and perform csh-like
+ history expansion on previous commands.
 
 Package: libsmartcols1
 Version: 2.37.4-1
@@ -1331,6 +1577,19 @@ Size: 4129
 SHA256sum: 4f6fdbd45d77c4467785b6bed311f5d5fc49d2fb29bd545dcd31be4df8688255
 Description:  Traffic control module - iptables action
 
+Package: terminfo
+Version: 6.3-2
+Depends: libc
+License: MIT
+Section: libs
+CPE-ID: cpe:/a:gnu:ncurses
+Architecture: arm_cortex-a15_neon-vfpv4
+Installed-Size: 7286
+Filename: terminfo_6.3-2_arm_cortex-a15_neon-vfpv4.ipk
+Size: 8033
+SHA256sum: 717fe244c06b1f234465428e344e0622aa2fcacc1a12b2424f086e08ad1bd71a
+Description:  Terminal Info Database (ncurses)
+
 Package: ubox
 Version: 2021-08-03-205defb5-2
 Depends: libc, libubox20220515, ubusd, ubus, libubus20220601, libuci20130104
@@ -1529,14 +1788,14 @@ SHA256sum: a989c293bc297173aea1120967accdd5e4e7422ff535d6f81fa3b4c1e81166a4
 Description:  wil6210 firmware
 
 Package: wireless-regdb
-Version: 2023.02.13-1
+Version: 2023.05.03-1
 Depends: libc
 Section: firmware
 Architecture: all
-Installed-Size: 2230
-Filename: wireless-regdb_2023.02.13-1_all.ipk
-Size: 2964
-SHA256sum: c5450fa44ca47717c5cc28c79a70e497d6ecf233519cdfbd35be3b27783b5f0f
+Installed-Size: 2246
+Filename: wireless-regdb_2023.05.03-1_all.ipk
+Size: 2989
+SHA256sum: 991d5ecda7d90d78f79577de0ce1f035b020f87109be717318a39fd9b7fca3e6
 Description:  Wireless Regulatory Database
 
 Package: wl12xx-firmware
