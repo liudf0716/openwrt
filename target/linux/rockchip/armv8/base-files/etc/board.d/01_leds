@@ -1,3 +1,4 @@
+#!/bin/sh
 
 . /lib/functions/leds.sh
 . /lib/functions/uci-defaults.sh
@@ -12,9 +13,13 @@ friendlyarm,nanopi-r2s)
 	ucidef_set_led_netdev "wan" "WAN" "$boardname:green:wan" "eth0"
 	ucidef_set_led_netdev "lan" "LAN" "$boardname:green:lan" "eth1"
 	;;
+friendlyarm,nanopi-r4se|\
 friendlyarm,nanopi-r4s)
 	ucidef_set_led_netdev "wan" "WAN" "green:wan" "eth0"
 	ucidef_set_led_netdev "lan" "LAN" "green:lan" "eth1"
+	;;
+armsom,p2pro)
+	ucidef_set_led_netdev "wlan" "WLAN" "blue:user" "wlan0"
 	;;
 esac
 

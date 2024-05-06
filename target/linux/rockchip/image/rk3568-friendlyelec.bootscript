@@ -1,0 +1,36 @@
+# friendlyelec rk3568 combined image, board detected by ADC
+# https://github.com/friendlyarm/uboot-rockchip/blob/nanopi5-v2017.09/board/rockchip/nanopi5/hwrev.c
+# R5S < 151 < R5C < 343 < R5S LTS < 478 < R5S C1
+
+env delete hwrev
+env delete adc_value
+
+# using SARADC CH1 to detect hwrev
+
+adc single saradc@fe720000 1 adc_value
+
+if test -n "$adc_value"; then
+    if test "$adc_value" -ge 478; then
+        echo board rev07
+        setenv hwrev 11
+    elif test "$adc_value" -ge 343; then
+        echo board rev05
+        setenv hwrev 10
+    elif test "$adc_value" -ge 151; then
+        echo board rev02
+        setenv hwrev 1
+    fi
+fi
+
+env delete adc_value
+
+part uuid mmc ${devnum}:2 uuid
+
+setenv bootargs "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=PARTUUID=${uuid} rw rootwait"
+
+load mmc ${devnum}:1 ${fdt_addr_r} rockchip${hwrev}.dtb
+load mmc ${devnum}:1 ${kernel_addr_r} kernel.img
+
+env delete hwrev
+
+booti ${kernel_addr_r} - ${fdt_addr_r}

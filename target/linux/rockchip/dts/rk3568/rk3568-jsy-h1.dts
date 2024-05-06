@@ -1,0 +1,75 @@
+/dts-v1/;
+
+#include "rk3568-linkease.dtsi"
+#include "rk3568-linkease-pcie30.dtsi"
+#include "../rockchip-drm-vvop.dtsi"
+
+/ {
+	compatible = "jsy,h1", "rockchip,rk3568";
+	model = "JSY H1";
+};
+
+/* 2.5G ETH */
+&pcie3x1 {
+	pcie@10 {
+		reg = <0x00100000 0 0 0 0>;
+		#address-cells = <3>;
+		#size-cells = <2>;
+
+		rtl8125_1: pcie-eth@10,0 {
+			compatible = "pci10ec,8125";
+			reg = <0x000000 0 0 0 0>;
+
+			realtek,led-data = <0x22b>;
+		};
+	};
+};
+
+/* 2.5G ETH */
+&pcie3x2 {
+	pcie@20 {
+		reg = <0x00200000 0 0 0 0>;
+		#address-cells = <3>;
+		#size-cells = <2>;
+
+		rtl8125_2: pcie-eth@20,0 {
+			compatible = "pci10ec,8125";
+			reg = <0x000000 0 0 0 0>;
+
+			realtek,led-data = <0x22b>;
+		};
+	};
+};
+
+// MULTI_PHY1
+&combphy1_usq {
+	rockchip,dis-u3otg1-port;
+};
+
+&sata1 {
+	status = "okay";
+};
+
+// MULTI_PHY2
+&sata2 {
+	status = "okay";
+};
+
+// USB2 PHY1 (for USB2.0 HOST)
+&usb2phy1 {
+	status = "okay";
+};
+
+// USB2 PHY1 port1 USB2_HOST3_D
+&u2phy1_host {
+	status = "okay";
+};
+
+// USB2_HOST3
+&usb_host1_ehci {
+	status = "okay";
+};
+
+&usb_host1_ohci {
+	status = "okay";
+};
