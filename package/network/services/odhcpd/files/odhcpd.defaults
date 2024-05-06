@@ -10,6 +10,9 @@ json_select lan
 json_get_vars protocol
 json_select ..
 json_select ..
+json_select model
+json_get_vars name
+json_select ..
 
 ODHCPDONLY=0
 V4MODE=disabled
@@ -24,6 +27,13 @@ case "$protocol" in
 	[ -e /proc/sys/net/ipv6 ] && V6MODE=server
 	;;
 esac
+
+# if the model name is "Panther X2", then we need to enable DHCPv4 and DHCPv6
+# on the LAN interface
+if [ "$name" = "Panther X2" ]; then
+	V4MODE=server
+	[ -e /proc/sys/net/ipv6 ] && V6MODE=server
+fi
 
 uci get dhcp.lan 1>/dev/null 2>/dev/null || {
 uci batch <<EOF
