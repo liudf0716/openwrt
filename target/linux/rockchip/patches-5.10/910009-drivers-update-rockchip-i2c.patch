@@ -100,7 +100,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
   * @grf_offset: offset inside the grf regmap for setting the i2c type
   * @calc_timings: Callback function for i2c timing information calculated
   */
-@@ -189,6 +209,9 @@ struct rk3x_i2c_soc_data {
+@@ -190,6 +210,9 @@ struct rk3x_i2c_soc_data {
   * @state: state of i2c transfer
   * @processed: byte length which has been send or received
   * @error: error code for i2c transfer
@@ -110,15 +110,15 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
   */
  struct rk3x_i2c {
  	struct i2c_adapter adap;
-@@ -200,6 +223,7 @@ struct rk3x_i2c {
+@@ -201,7 +224,6 @@ struct rk3x_i2c {
  	struct clk *clk;
  	struct clk *pclk;
  	struct notifier_block clk_rate_nb;
-+	bool autostop_supported;
+-	int irq;
  
  	/* Settings */
  	struct i2c_timings t;
-@@ -219,8 +243,23 @@ struct rk3x_i2c {
+@@ -221,8 +243,24 @@ struct rk3x_i2c {
  	enum rk3x_i2c_state state;
  	unsigned int processed;
  	int error;
@@ -127,6 +127,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
 +	struct notifier_block i2c_restart_nb;
 +	bool system_restarting;
 +	struct rk_tb_client tb_cl;
++	bool autostop_supported;
 +	int irq;
  };
  
@@ -142,7 +143,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
  static inline void i2c_writel(struct rk3x_i2c *i2c, u32 value,
  			      unsigned int offset)
  {
-@@ -238,15 +277,75 @@ static inline void rk3x_i2c_clean_ipd(st
+@@ -240,15 +278,75 @@ static inline void rk3x_i2c_clean_ipd(st
  	i2c_writel(i2c, REG_INT_ALL, REG_IPD);
  }
  
@@ -221,7 +222,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
  
  	/* enable adapter with correct mode, send START condition */
  	val |= REG_CON_EN | REG_CON_MOD(i2c->mode) | REG_CON_START;
-@@ -256,11 +355,17 @@ static void rk3x_i2c_start(struct rk3x_i
+@@ -258,11 +356,17 @@ static void rk3x_i2c_start(struct rk3x_i
  		val |= REG_CON_ACTACK;
  
  	i2c_writel(i2c, val, REG_CON);
@@ -241,7 +242,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
   * @error: Error code to return in rk3x_i2c_xfer
   */
  static void rk3x_i2c_stop(struct rk3x_i2c *i2c, int error)
-@@ -279,6 +384,7 @@ static void rk3x_i2c_stop(struct rk3x_i2
+@@ -281,6 +385,7 @@ static void rk3x_i2c_stop(struct rk3x_i2
  
  		ctrl = i2c_readl(i2c, REG_CON);
  		ctrl |= REG_CON_STOP;
@@ -249,7 +250,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
  		i2c_writel(i2c, ctrl, REG_CON);
  	} else {
  		/* Signal rk3x_i2c_xfer to start the next message. */
-@@ -294,13 +400,12 @@ static void rk3x_i2c_stop(struct rk3x_i2
+@@ -296,13 +401,12 @@ static void rk3x_i2c_stop(struct rk3x_i2
  		i2c_writel(i2c, ctrl, REG_CON);
  
  		/* signal that we are finished with the current msg */
@@ -265,7 +266,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
   */
  static void rk3x_i2c_prepare_read(struct rk3x_i2c *i2c)
  {
-@@ -324,6 +429,8 @@ static void rk3x_i2c_prepare_read(struct
+@@ -326,6 +430,8 @@ static void rk3x_i2c_prepare_read(struct
  	if (i2c->processed != 0) {
  		con &= ~REG_CON_MOD_MASK;
  		con |= REG_CON_MOD(REG_CON_MOD_RX);
@@ -274,7 +275,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
  	}
  
  	i2c_writel(i2c, con, REG_CON);
-@@ -331,10 +438,9 @@ static void rk3x_i2c_prepare_read(struct
+@@ -333,10 +439,9 @@ static void rk3x_i2c_prepare_read(struct
  }
  
  /**
@@ -287,7 +288,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
  {
  	unsigned int i, j;
  	u32 cnt = 0;
-@@ -362,45 +468,20 @@ static void rk3x_i2c_fill_transmit_buf(s
+@@ -364,45 +469,20 @@ static void rk3x_i2c_fill_transmit_buf(s
  			break;
  	}
  
@@ -338,7 +339,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
  		rk3x_i2c_clean_ipd(i2c);
  		return;
  	}
-@@ -408,27 +489,21 @@ static void rk3x_i2c_handle_write(struct
+@@ -410,27 +490,21 @@ static void rk3x_i2c_handle_write(struct
  	/* ack interrupt */
  	i2c_writel(i2c, REG_INT_MBTF, REG_IPD);
  
@@ -369,12 +370,12 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
  	/* Can only handle a maximum of 32 bytes at a time */
  	if (len > 32)
  		len = 32;
-@@ -441,7 +516,21 @@ static void rk3x_i2c_handle_read(struct
+@@ -443,7 +517,21 @@ static void rk3x_i2c_handle_read(struct
  		byte = (val >> ((i % 4) * 8)) & 0xff;
  		i2c->msg->buf[i2c->processed++] = byte;
  	}
 +}
-+
+ 
 +static void rk3x_i2c_handle_read(struct rk3x_i2c *i2c, unsigned int ipd)
 +{
 +	/* we only care for MBRF here. */
@@ -386,12 +387,12 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
 +
 +	/* read the data from receive buffer */
 +	rk3x_i2c_read(i2c);
- 
++
 +	rk3x_i2c_auto_stop(i2c);
  	/* are we finished? */
  	if (i2c->processed == i2c->msg->len)
  		rk3x_i2c_stop(i2c, i2c->error);
-@@ -455,24 +544,36 @@ static void rk3x_i2c_handle_stop(struct
+@@ -457,24 +545,36 @@ static void rk3x_i2c_handle_stop(struct
  
  	if (!(ipd & REG_INT_STOP)) {
  		rk3x_i2c_stop(i2c, -EIO);
@@ -430,7 +431,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
  }
  
  static irqreturn_t rk3x_i2c_irq(int irqno, void *dev_id)
-@@ -484,7 +585,9 @@ static irqreturn_t rk3x_i2c_irq(int irqn
+@@ -486,7 +586,9 @@ static irqreturn_t rk3x_i2c_irq(int irqn
  
  	ipd = i2c_readl(i2c, REG_IPD);
  	if (i2c->state == STATE_IDLE) {
@@ -441,7 +442,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
  		rk3x_i2c_clean_ipd(i2c);
  		goto out;
  	}
-@@ -504,8 +607,15 @@ static irqreturn_t rk3x_i2c_irq(int irqn
+@@ -506,8 +608,15 @@ static irqreturn_t rk3x_i2c_irq(int irqn
  
  		ipd &= ~REG_INT_NAKRCV;
  
@@ -459,7 +460,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
  	}
  
  	/* is there anything left to handle? */
-@@ -513,9 +623,6 @@ static irqreturn_t rk3x_i2c_irq(int irqn
+@@ -515,9 +624,6 @@ static irqreturn_t rk3x_i2c_irq(int irqn
  		goto out;
  
  	switch (i2c->state) {
@@ -469,7 +470,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
  	case STATE_WRITE:
  		rk3x_i2c_handle_write(i2c, ipd);
  		break;
-@@ -535,10 +642,11 @@ out:
+@@ -537,10 +643,11 @@ out:
  }
  
  /**
@@ -483,7 +484,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
   */
  static const struct i2c_spec_values *rk3x_i2c_get_spec(unsigned int speed)
  {
-@@ -551,12 +659,13 @@ static const struct i2c_spec_values *rk3
+@@ -553,12 +660,13 @@ static const struct i2c_spec_values *rk3
  }
  
  /**
@@ -499,7 +500,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
   * a best-effort divider value is returned in divs. If the target rate is
   * too high, we silently use the highest possible rate.
   */
-@@ -711,12 +820,13 @@ static int rk3x_i2c_v0_calc_timings(unsi
+@@ -713,12 +821,13 @@ static int rk3x_i2c_v0_calc_timings(unsi
  }
  
  /**
@@ -515,7 +516,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
   * a best-effort divider value is returned in divs. If the target rate is
   * too high, we silently use the highest possible rate.
   * The following formulas are v1's method to calculate timings.
-@@ -960,14 +1070,14 @@ static int rk3x_i2c_clk_notifier_cb(stru
+@@ -962,14 +1071,14 @@ static int rk3x_i2c_clk_notifier_cb(stru
  }
  
  /**
@@ -535,7 +536,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
   */
  static int rk3x_i2c_setup(struct rk3x_i2c *i2c, struct i2c_msg *msgs, int num)
  {
-@@ -1032,18 +1142,19 @@ static int rk3x_i2c_setup(struct rk3x_i2
+@@ -1034,18 +1143,19 @@ static int rk3x_i2c_setup(struct rk3x_i2
  
  	i2c->addr = msgs[0].addr;
  	i2c->busy = true;
@@ -558,7 +559,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
  
  	while (READ_ONCE(i2c->busy) &&
  	       ktime_compare(ktime_get(), timeout) < 0) {
-@@ -1063,6 +1174,9 @@ static int rk3x_i2c_xfer_common(struct i
+@@ -1065,6 +1175,9 @@ static int rk3x_i2c_xfer_common(struct i
  	int ret = 0;
  	int i;
  
@@ -568,17 +569,17 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
  	spin_lock_irqsave(&i2c->lock, flags);
  
  	clk_enable(i2c->clk);
-@@ -1075,25 +1189,39 @@ static int rk3x_i2c_xfer_common(struct i
+@@ -1077,6 +1190,9 @@ static int rk3x_i2c_xfer_common(struct i
  	 * rk3x_i2c_setup()).
  	 */
  	for (i = 0; i < num; i += ret) {
--		ret = rk3x_i2c_setup(i2c, msgs + i, num - i);
 +		unsigned long xfer_time = 100;
 +		int len;
++
+ 		ret = rk3x_i2c_setup(i2c, msgs + i, num - i);
  
-+		ret = rk3x_i2c_setup(i2c, msgs + i, num - i);
  		if (ret < 0) {
- 			dev_err(i2c->dev, "rk3x_i2c_setup() failed\n");
+@@ -1084,6 +1200,17 @@ static int rk3x_i2c_xfer_common(struct i
  			break;
  		}
  
@@ -593,27 +594,26 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
 +		xfer_time += len / 64;
 +		xfer_time += DIV_ROUND_CLOSEST(((len * 9) + 2) * MSEC_PER_SEC,
 +					       i2c->t.bus_freq_hz);
-+
  		if (i + ret >= num)
  			i2c->is_last_msg = true;
  
--		spin_unlock_irqrestore(&i2c->lock, flags);
--
- 		rk3x_i2c_start(i2c);
+@@ -1093,12 +1220,12 @@ static int rk3x_i2c_xfer_common(struct i
+ 			rk3x_i2c_start(i2c);
  
-+		spin_unlock_irqrestore(&i2c->lock, flags);
-+
- 		if (!polling) {
  			timeout = wait_event_timeout(i2c->wait, !i2c->busy,
 -						     msecs_to_jiffies(WAIT_TIMEOUT));
+-		} else {
 +						     msecs_to_jiffies(xfer_time));
- 		} else {
++		} else { 
+ 			disable_irq(i2c->irq);
+ 			rk3x_i2c_start(i2c);
+ 
 -			timeout = rk3x_i2c_wait_xfer_poll(i2c);
 +			timeout = rk3x_i2c_wait_xfer_poll(i2c, xfer_time);
- 		}
  
- 		spin_lock_irqsave(&i2c->lock, flags);
-@@ -1103,7 +1231,7 @@ static int rk3x_i2c_xfer_common(struct i
+ 			enable_irq(i2c->irq);
+ 		}
+@@ -1110,7 +1237,7 @@ static int rk3x_i2c_xfer_common(struct i
  				i2c_readl(i2c, REG_IPD), i2c->state);
  
  			/* Force a STOP condition without interrupt */
@@ -622,7 +622,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
  			val = i2c_readl(i2c, REG_CON) & REG_CON_TUNING_MASK;
  			val |= REG_CON_EN | REG_CON_STOP;
  			i2c_writel(i2c, val, REG_CON);
-@@ -1120,6 +1248,9 @@ static int rk3x_i2c_xfer_common(struct i
+@@ -1127,6 +1254,9 @@ static int rk3x_i2c_xfer_common(struct i
  		}
  	}
  
@@ -632,7 +632,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
  	clk_disable(i2c->pclk);
  	clk_disable(i2c->clk);
  
-@@ -1140,12 +1271,120 @@ static int rk3x_i2c_xfer_polling(struct
+@@ -1147,12 +1277,120 @@ static int rk3x_i2c_xfer_polling(struct
  	return rk3x_i2c_xfer_common(adap, msgs, num, true);
  }
  
@@ -754,7 +754,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
  	return 0;
  }
  
-@@ -1161,7 +1400,12 @@ static const struct i2c_algorithm rk3x_i
+@@ -1168,7 +1406,12 @@ static const struct i2c_algorithm rk3x_i
  };
  
  static const struct rk3x_i2c_soc_data rv1108_soc_data = {
@@ -768,7 +768,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
  	.calc_timings = rk3x_i2c_v1_calc_timings,
  };
  
-@@ -1196,6 +1440,10 @@ static const struct of_device_id rk3x_i2
+@@ -1203,6 +1446,10 @@ static const struct of_device_id rk3x_i2
  		.data = &rv1108_soc_data
  	},
  	{
@@ -779,7 +779,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
  		.compatible = "rockchip,rk3066-i2c",
  		.data = &rk3066_soc_data
  	},
-@@ -1219,13 +1467,38 @@ static const struct of_device_id rk3x_i2
+@@ -1226,13 +1473,38 @@ static const struct of_device_id rk3x_i2
  };
  MODULE_DEVICE_TABLE(of, rk3x_i2c_match);
  
@@ -820,7 +820,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
  	u32 value;
  	int irq;
  	unsigned long clk_rate;
-@@ -1234,8 +1507,16 @@ static int rk3x_i2c_probe(struct platfor
+@@ -1241,8 +1513,16 @@ static int rk3x_i2c_probe(struct platfor
  	if (!i2c)
  		return -ENOMEM;
  
@@ -839,7 +839,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
  
  	/* use common interface to get I2C timing properties */
  	i2c_parse_fw_timings(&pdev->dev, &i2c->t, true);
-@@ -1244,22 +1525,28 @@ static int rk3x_i2c_probe(struct platfor
+@@ -1251,22 +1531,28 @@ static int rk3x_i2c_probe(struct platfor
  	i2c->adap.owner = THIS_MODULE;
  	i2c->adap.algo = &rk3x_i2c_algorithm;
  	i2c->adap.retries = 3;
@@ -872,7 +872,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
  	/*
  	 * Switch to new interface if the SoC also offers the old one.
  	 * The control bit is located in the GRF register space.
-@@ -1268,24 +1555,27 @@ static int rk3x_i2c_probe(struct platfor
+@@ -1275,24 +1561,27 @@ static int rk3x_i2c_probe(struct platfor
  		struct regmap *grf;
  
  		grf = syscon_regmap_lookup_by_phandle(np, "rockchip,grf");
@@ -881,14 +881,14 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
 -				"rk3x-i2c needs 'rockchip,grf' property\n");
 -			return PTR_ERR(grf);
 -		}
--
++		if (!IS_ERR(grf)) {
++			int bus_nr = i2c->adap.nr;
+ 
 -		if (bus_nr < 0) {
 -			dev_err(&pdev->dev, "rk3x-i2c needs i2cX alias");
 -			return -EINVAL;
 -		}
-+		if (!IS_ERR(grf)) {
-+			int bus_nr = i2c->adap.nr;
- 
+-
 -		/* 27+i: write mask, 11+i: value */
 -		value = BIT(27 + bus_nr) | BIT(11 + bus_nr);
 +			if (i2c->soc_data == &rv1108_soc_data && bus_nr == 2)
@@ -916,7 +916,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
  		}
  	}
  
-@@ -1293,6 +1583,14 @@ static int rk3x_i2c_probe(struct platfor
+@@ -1300,6 +1589,14 @@ static int rk3x_i2c_probe(struct platfor
  	irq = platform_get_irq(pdev, 0);
  	if (irq < 0)
  		return irq;
@@ -931,7 +931,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
  
  	ret = devm_request_irq(&pdev->dev, irq, rk3x_i2c_irq,
  			       0, dev_name(&pdev->dev), i2c);
-@@ -1303,22 +1601,24 @@ static int rk3x_i2c_probe(struct platfor
+@@ -1312,22 +1609,24 @@ static int rk3x_i2c_probe(struct platfor
  
  	platform_set_drvdata(pdev, i2c);
  
@@ -971,7 +971,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
  
  	ret = clk_prepare(i2c->clk);
  	if (ret < 0) {
-@@ -1331,17 +1631,29 @@ static int rk3x_i2c_probe(struct platfor
+@@ -1340,17 +1639,29 @@ static int rk3x_i2c_probe(struct platfor
  		goto err_clk;
  	}
  
@@ -1009,7 +1009,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
  	if (ret < 0)
  		goto err_clk_notifier;
  
-@@ -1363,13 +1675,17 @@ static int rk3x_i2c_remove(struct platfo
+@@ -1372,13 +1683,17 @@ static int rk3x_i2c_remove(struct platfo
  	i2c_del_adapter(&i2c->adap);
  
  	clk_notifier_unregister(i2c->clk, &i2c->clk_rate_nb);
@@ -1028,7 +1028,7 @@ Subject: [PATCH 09/42] drivers: update rockchip i2c
  
  static struct platform_driver rk3x_i2c_driver = {
  	.probe   = rk3x_i2c_probe,
-@@ -1381,7 +1697,25 @@ static struct platform_driver rk3x_i2c_d
+@@ -1390,7 +1705,25 @@ static struct platform_driver rk3x_i2c_d
  	},
  };
  
