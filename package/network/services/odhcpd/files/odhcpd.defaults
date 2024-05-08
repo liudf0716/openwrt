@@ -28,12 +28,14 @@ case "$protocol" in
 	;;
 esac
 
-# if the model name is "Panther X2", then we need to enable DHCPv4 and DHCPv6
+# if the model name is "Panther X2" or "VMware, Inc. VMware Virtual Platform", then we need to enable DHCPv4 and DHCPv6
 # on the LAN interface
-if [ "$name" = "Panther X2" ]; then
+case "$name" in
+"Panther X2" | "VMware, Inc. VMware Virtual Platform")
 	V4MODE=server
 	[ -e /proc/sys/net/ipv6 ] && V6MODE=server
-fi
+	;;
+esac
 
 uci get dhcp.lan 1>/dev/null 2>/dev/null || {
 uci batch <<EOF
