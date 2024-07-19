@@ -11,7 +11,7 @@ json_get_vars protocol
 json_select ..
 json_select ..
 json_select model
-json_get_vars name
+json_get_vars id
 json_select ..
 
 ODHCPDONLY=0
@@ -28,12 +28,10 @@ case "$protocol" in
 	;;
 esac
 
-# if the model name is "Panther X2" or "VMware, Inc. VMware Virtual Platform", then we need to enable DHCPv4 and DHCPv6
+# if the model id is "Panther X2" or "VMware, Inc. VMware Virtual Platform", then we need to enable DHCPv4 and DHCPv6
 # on the LAN interface
-case "$name" in
-"Panther X2" | 
-"VMware, Inc. VMware Virtual Platform" |
-"innotek GmbH VirtualBox")
+case "$id" in
+innotek-gmbh-virtualbox | panther-x2 | vmware-inc-vmware-virtual-platform)
 	V4MODE=server
 	[ -e /proc/sys/net/ipv6 ] && V6MODE=server
 	;;
