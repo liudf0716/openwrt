@@ -311,7 +311,7 @@ generate_static_system() {
 	uci -q batch <<-EOF
 		delete system.@system[0]
 		add system system
-		set system.@system[-1].hostname='ChatGPT-WRT'
+		set system.@system[-1].hostname='chawrt'
 		set system.@system[-1].timezone='UTC'
 		set system.@system[-1].language='zh-cn'
 		set system.@system[-1].ttylogin='0'
