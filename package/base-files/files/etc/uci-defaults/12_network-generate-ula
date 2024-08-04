@@ -2,9 +2,6 @@
 
 uci -q batch <<-EOF >/dev/null
 	set network.globals.ula_prefix="$(hexdump -vn 5 -e '"fd" 1/1 "%02x:" 2/2 "%x:"' /dev/urandom):/48"
-	set network.lan.ipv6=0
-	set network.wan.ipv6=0
-	set network.lan.delegate="0"
 	commit network
 EOF
 
