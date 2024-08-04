@@ -538,7 +538,7 @@ dhcp_add() {
 	network_get_protocol proto "$net" || return 0
 
 	# Do not support non-static interfaces for now
-	# [ static = "$proto" ] || return 0
+	[ static = "$proto" ] || return 0
 
 	ipaddr="${subnet%%/*}"
 	prefix_or_netmask="${subnet##*/}"
@@ -554,7 +554,7 @@ dhcp_add() {
 		logger -t dnsmasq \
 			"found already running DHCP-server on interface '$ifname'" \
 			"refusing to start, use 'option force 1' to override"
-		# return 0
+		return 0
 	}
 
 	config_get start "$cfg" start 100
