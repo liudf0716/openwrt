@@ -1,0 +1,24 @@
+. /lib/functions.sh
+
+case "$(board_name)" in
+friendlyarm,nanopi-r2s)
+    uci batch <<EOF
+    add firewall rule
+    set firewall.@rule[-1].name='Allow-ChaWrt-Admin'
+    add_list firewall.@rule[-1].proto='tcp'
+    set firewall.@rule[-1].src='wan'
+    set firewall.@rule[-1].dest_port='80'
+    set firewall.@rule[-1].target='ACCEPT'
+
+    add firewall rule
+    set firewall.@rule[-1].name='Allow-ChaWrt-Ssh'
+    add_list firewall.@rule[-1].proto='tcp'
+    set firewall.@rule[-1].src='wan'
+    set firewall.@rule[-1].dest_port='22'
+    set firewall.@rule[-1].target='ACCEPT'
+    commit firewall
+EOF
+    ;;
+esac
+
+exit 0
